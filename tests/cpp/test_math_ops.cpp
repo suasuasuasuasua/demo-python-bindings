@@ -1,85 +1,63 @@
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
-#include <stdexcept>
-
+#include <gtest/gtest.h>
 #include "myMathLib/math_ops.h"
 
-// Returns true when |a - b| is within rel_tol of |b| (or abs_tol for near-zero values).
-static bool near_eq(double a, double b, double rel_tol = 1e-9, double abs_tol = 1e-12) {
-    return std::abs(a - b) <= std::max(rel_tol * std::max(std::abs(a), std::abs(b)), abs_tol);
+TEST(Add, Positive) {
+    EXPECT_DOUBLE_EQ(myMathLib::add(3.0, 4.0), 7.0);
 }
 
-#define CHECK(expr) \
-    do { \
-        if (!(expr)) { \
-            std::cerr << "FAIL [" << __func__ << "]: " #expr \
-                      << " (" << __FILE__ << ":" << __LINE__ << ")\n"; \
-            return false; \
-        } \
-    } while (0)
-
-static bool test_add() {
-    CHECK(near_eq(myMathLib::add(3.0, 4.0),   7.0));
-    CHECK(near_eq(myMathLib::add(-1.0, 1.0),  0.0));
-    CHECK(near_eq(myMathLib::add(0.0, 0.0),   0.0));
-    CHECK(near_eq(myMathLib::add(-5.0, -3.0), -8.0));
-    return true;
+TEST(Add, Cancel) {
+    EXPECT_DOUBLE_EQ(myMathLib::add(-1.0, 1.0), 0.0);
 }
 
-static bool test_subtract() {
-    CHECK(near_eq(myMathLib::subtract(10.0, 3.0), 7.0));
-    CHECK(near_eq(myMathLib::subtract(0.0, 5.0),  -5.0));
-    return true;
+TEST(Add, Zeros) {
+    EXPECT_DOUBLE_EQ(myMathLib::add(0.0, 0.0), 0.0);
 }
 
-static bool test_multiply() {
-    CHECK(near_eq(myMathLib::multiply(6.0, 7.0),   42.0));
-    CHECK(near_eq(myMathLib::multiply(-2.0, 3.0),  -6.0));
-    CHECK(near_eq(myMathLib::multiply(0.0, 100.0), 0.0));
-    return true;
+TEST(Add, Negatives) {
+    EXPECT_DOUBLE_EQ(myMathLib::add(-5.0, -3.0), -8.0);
 }
 
-static bool test_divide() {
-    CHECK(near_eq(myMathLib::divide(15.0, 3.0), 5.0));
-    CHECK(near_eq(myMathLib::divide(1.0, 4.0),  0.25));
-    try {
-        myMathLib::divide(1.0, 0.0);
-        std::cerr << "FAIL [" << __func__ << "]: expected exception for divide by zero\n";
-        return false;
-    } catch (const std::invalid_argument&) {}
-    return true;
+TEST(Subtract, Basic) {
+    EXPECT_DOUBLE_EQ(myMathLib::subtract(10.0, 3.0), 7.0);
 }
 
-static bool test_power() {
-    CHECK(near_eq(myMathLib::power(2.0, 8.0),  256.0));
-    CHECK(near_eq(myMathLib::power(3.0, 0.0),  1.0));
-    CHECK(near_eq(myMathLib::power(5.0, -1.0), 0.2));
-    return true;
+TEST(Subtract, NegativeResult) {
+    EXPECT_DOUBLE_EQ(myMathLib::subtract(0.0, 5.0), -5.0);
 }
 
-int main() {
-    struct { const char* name; bool (*fn)(); } tests[] = {
-        { "add",      test_add      },
-        { "subtract", test_subtract },
-        { "multiply", test_multiply },
-        { "divide",   test_divide   },
-        { "power",    test_power    },
-    };
-
-    int failed = 0;
-    for (auto& t : tests) {
-        if (t.fn()) {
-            std::cout << "PASS: " << t.name << "\n";
-        } else {
-            ++failed;
-        }
-    }
-
-    if (failed) {
-        std::cerr << failed << " test(s) failed.\n";
-        return EXIT_FAILURE;
-    }
-    std::cout << "All tests passed.\n";
-    return EXIT_SUCCESS;
+TEST(Multiply, Positive) {
+    EXPECT_DOUBLE_EQ(myMathLib::multiply(6.0, 7.0), 42.0);
 }
+
+TEST(Multiply, Negative) {
+    EXPECT_DOUBLE_EQ(myMathLib::multiply(-2.0, 3.0), -6.0);
+}
+
+TEST(Multiply, Zero) {
+    EXPECT_DOUBLE_EQ(myMathLib::multiply(0.0, 100.0), 0.0);
+}
+
+TEST(Divide, Exact) {
+    EXPECT_DOUBLE_EQ(myMathLib::divide(15.0, 3.0), 5.0);
+}
+
+TEST(Divide, Fraction) {
+    EXPECT_DOUBLE_EQ(myMathLib::divide(1.0, 4.0), 0.25);
+}
+
+TEST(Divide, ByZeroThrows) {
+    EXPECT_THROW(myMathLib::divide(1.0, 0.0), std::invalid_argument);
+}
+
+TEST(Power, IntegerExponent) {
+    EXPECT_DOUBLE_EQ(myMathLib::power(2.0, 8.0), 256.0);
+}
+
+TEST(Power, ZeroExponent) {
+    EXPECT_DOUBLE_EQ(myMathLib::power(3.0, 0.0), 1.0);
+}
+
+TEST(Power, NegativeExponent) {
+    EXPECT_NEAR(myMathLib::power(5.0, -1.0), 0.2, 1e-12);
+}
+

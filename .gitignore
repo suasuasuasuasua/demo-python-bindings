@@ -1,5 +1,8 @@
 # Build artifacts
+a.out
+*.o
 build/
+build_*/
 dist/
 *.egg-info/
 __pycache__/
