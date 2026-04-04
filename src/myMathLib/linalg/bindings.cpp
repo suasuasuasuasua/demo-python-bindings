@@ -15,4 +15,6 @@ PYBIND11_MODULE(_linalg, m) {
           "Cross product of two 3-element vectors");
     m.def("matmul", &myMathLib::linalg::matmul, py::arg("A"), py::arg("B"),
           "Matrix multiplication of two 2-D lists (A @ B)");
+    m.def("angle_between", &myMathLib::linalg::angle_between, py::arg("a"), py::arg("b"),
+          "Angle in degrees between two equal-length vectors");
 }

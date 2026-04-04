@@ -9,6 +9,9 @@ target_include_directories(myMathLib_calculus
         $<INSTALL_INTERFACE:include>
 )
 
+# Pull in numerics (which transitively exposes operators → constants).
+target_link_libraries(myMathLib_calculus PUBLIC myMathLib_numerics)
+
 target_compile_definitions(myMathLib_calculus PRIVATE CALCULUS_EXPORTS)
 
 target_compile_options(myMathLib_calculus PRIVATE
@@ -24,10 +27,21 @@ if(BUILD_PYTHON_BINDINGS)
 
     target_include_directories(_calculus PRIVATE include)
 
+    # _calculus and myMathLib_calculus are installed together in myMathLib/calculus/.
+    # _calculus needs $ORIGIN to locate myMathLib_calculus.so in the same directory.
+    # myMathLib_calculus needs both $ORIGIN (for any peer libs in the same dir) and
+    # $ORIGIN/.. to reach the utility DLLs (numerics, operators, constants) one
+    # level up in myMathLib/.
     if(APPLE)
-        set_target_properties(_calculus PROPERTIES INSTALL_RPATH "@loader_path")
+        set_target_properties(_calculus PROPERTIES
+            INSTALL_RPATH "@loader_path")
+        set_target_properties(myMathLib_calculus PROPERTIES
+            INSTALL_RPATH "@loader_path:@loader_path/../")
     elseif(UNIX)
-        set_target_properties(_calculus PROPERTIES INSTALL_RPATH "$ORIGIN")
+        set_target_properties(_calculus PROPERTIES
+            INSTALL_RPATH "$ORIGIN")
+        set_target_properties(myMathLib_calculus PROPERTIES
+            INSTALL_RPATH "$ORIGIN:$ORIGIN/..")
     endif()
 
     # Install extension and its C++ shared library into the calculus sub-package dir

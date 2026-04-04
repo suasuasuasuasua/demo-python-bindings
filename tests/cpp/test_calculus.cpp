@@ -59,3 +59,33 @@ TEST(Integrate, ZeroIntervalsThrows) {
     );
 }
 
+TEST(ConvergingIntegrate, Constant) {
+    // integral of 1 from 0 to 5 = 5
+    EXPECT_NEAR(
+        myMathLib::calculus::converging_integrate([](double) { return 1.0; }, 0.0, 5.0),
+        5.0, 1e-4
+    );
+}
+
+TEST(ConvergingIntegrate, Linear) {
+    // integral of x from 0 to 1 = 0.5
+    EXPECT_NEAR(
+        myMathLib::calculus::converging_integrate([](double x) { return x; }, 0.0, 1.0),
+        0.5, 1e-4
+    );
+}
+
+TEST(ConvergingIntegrate, EqualBoundsIsZero) {
+    EXPECT_NEAR(
+        myMathLib::calculus::converging_integrate([](double x) { return x; }, 2.0, 2.0),
+        0.0, 1e-9
+    );
+}
+
+TEST(ConvergingIntegrate, InvalidTolThrows) {
+    EXPECT_THROW(
+        myMathLib::calculus::converging_integrate([](double x) { return x; }, 0.0, 1.0, -1.0),
+        std::invalid_argument
+    );
+}
+

@@ -75,3 +75,22 @@ TEST(Matmul, IncompatibleDimsThrows) {
     );
 }
 
+TEST(AngleBetween, Orthogonal) {
+    // 90 degrees between x-axis and y-axis
+    EXPECT_NEAR(myMathLib::linalg::angle_between({1, 0}, {0, 1}), 90.0, 1e-9);
+}
+
+TEST(AngleBetween, Parallel) {
+    // 0 degrees between identical vectors
+    EXPECT_NEAR(myMathLib::linalg::angle_between({1, 2, 3}, {1, 2, 3}), 0.0, 1e-9);
+}
+
+TEST(AngleBetween, Antiparallel) {
+    // 180 degrees between opposite vectors
+    EXPECT_NEAR(myMathLib::linalg::angle_between({1, 0}, {-1, 0}), 180.0, 1e-9);
+}
+
+TEST(AngleBetween, MismatchedSizesThrows) {
+    EXPECT_THROW(myMathLib::linalg::angle_between({1, 2}, {1, 2, 3}), std::invalid_argument);
+}
+

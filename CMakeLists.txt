@@ -43,6 +43,11 @@ if(BUILD_TESTING)
 endif()
 
 # ── Sub-libraries ──────────────────────────────────────────────────────────────
+# Shared utility libraries (order matters: each depends on the ones above it).
+add_subdirectory(src/myMathLib/constants)
+add_subdirectory(src/myMathLib/operators)
+add_subdirectory(src/myMathLib/numerics)
+
 add_subdirectory(src/myMathLib/core)
 add_subdirectory(src/myMathLib/linalg)
 add_subdirectory(src/myMathLib/calculus)
