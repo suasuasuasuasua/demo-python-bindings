@@ -11,5 +11,6 @@ requires-python = ">=3.8"
 license = { text = "MIT" }
 
 [tool.scikit-build]
+build-dir = "build"
 cmake.build-type = "Release"
 wheel.packages = []
