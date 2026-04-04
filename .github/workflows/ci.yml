@@ -37,6 +37,39 @@ jobs:
       - name: Run Python tests
         run: python -m unittest discover -s tests/python -v
 
+  # ─── MinGW cross-compile: Linux → Windows ─────────────────────────────────
+  mingw-cross-cpp:
+    name: MinGW cross-compile C++ (Linux → Windows)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MinGW cross-compiler and Wine
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 wine64
+
+      - name: Set Wine DLL search path
+        run: |
+          MINGW_DLL_DIR=$(dirname $(x86_64-w64-mingw32-gcc -print-libgcc-file-name))
+          echo "WINEPATH=${MINGW_DLL_DIR}:$(pwd)/build-mingw/bin" >> $GITHUB_ENV
+
+      - name: Configure CMake (MinGW toolchain)
+        run: >
+          cmake -B build-mingw
+          -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw-w64-x86_64.cmake
+          -DBUILD_PYTHON_BINDINGS=OFF
+          -DBUILD_TESTING=ON
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE=PRE_TEST
+
+      - name: Build
+        run: cmake --build build-mingw --config Release
+
+      - name: Run C++ tests via Wine
+        run: ctest --test-dir build-mingw -C Release --output-on-failure
+
   # ─── Native C++ build + tests ──────────────────────────────────────────────
   cpp-tests:
     name: C++ (${{ matrix.os }})
