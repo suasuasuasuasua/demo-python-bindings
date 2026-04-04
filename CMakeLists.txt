@@ -63,20 +63,12 @@ if(BUILD_PYTHON_BINDINGS)
     install(TARGETS myMathLib_core DESTINATION .)
 endif()
 
-# ── C++ tests (Catch2) ────────────────────────────────────────────────────────
+# ── C++ tests (plain CTest) ───────────────────────────────────────────────────
 if(BUILD_TESTING)
     include(CTest)
-    include(FetchContent)
-
-    FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v3.4.0
-    )
-    FetchContent_MakeAvailable(Catch2)
 
     add_executable(test_math_ops tests/cpp/test_math_ops.cpp)
-    target_link_libraries(test_math_ops PRIVATE myMathLib_core Catch2::Catch2WithMain)
+    target_link_libraries(test_math_ops PRIVATE myMathLib_core)
     target_include_directories(test_math_ops PRIVATE src/myMathLib/include)
 
     # On Linux/macOS set RPATH so the test executable finds the shared library
@@ -90,6 +82,5 @@ if(BUILD_TESTING)
         )
     endif()
 
-    include(Catch)
-    catch_discover_tests(test_math_ops)
+    add_test(NAME math_ops COMMAND test_math_ops)
 endif()
