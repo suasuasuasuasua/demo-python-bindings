@@ -52,9 +52,11 @@ jobs:
 
       - name: Set Wine environment variables
         run: |
-          # Resolve the full path to wine64 so cmake's execute_process can find
-          # it without relying on PATH lookup inside generated cmake test scripts.
-          WINE_BIN=$(which wine64)
+          # Resolve the full path to the wine binary so cmake's execute_process
+          # can find it without relying on PATH lookup inside generated cmake
+          # test scripts.  On Ubuntu 24.04 the wine64 package installs the
+          # binary as 'wine' (universal 32/64-bit binary) rather than 'wine64'.
+          WINE_BIN=$(which wine64 2>/dev/null || which wine)
           echo "WINE_BIN=${WINE_BIN}" >> $GITHUB_ENV
 
           MINGW_DLL_DIR=$(dirname $(x86_64-w64-mingw32-gcc -print-libgcc-file-name))

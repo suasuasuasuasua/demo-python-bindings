@@ -1,7 +1,7 @@
 # Cross-compilation toolchain for targeting 64-bit Windows using MinGW-w64 on Linux.
 #
 # Usage:
-#   WINE=$(which wine64)
+#   WINE=$(which wine64 2>/dev/null || which wine)
 #   MINGW_DLL=$(dirname $(x86_64-w64-mingw32-gcc -print-libgcc-file-name))
 #   export WINEPATH="${MINGW_DLL};$(pwd)/build-mingw/bin"   # semicolons!
 #   cmake -B build-mingw \
@@ -15,8 +15,9 @@
 # Prerequisites (Debian/Ubuntu):
 #   sudo apt-get install gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 wine64
 #
-# Note: initialise the Wine prefix before running tests:
-#   WINEDEBUG=-all wine64 wineboot --init
+# Note: on Ubuntu 24.04 the wine64 package installs the binary as 'wine'
+# (universal 32/64-bit); use 'which wine64 2>/dev/null || which wine' to
+# locate it portably.
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR AMD64)
@@ -27,8 +28,8 @@ set(CMAKE_RC_COMPILER  x86_64-w64-mingw32-windres)
 
 # Use Wine to run Windows test binaries on the Linux host.
 # Declared as a CACHE variable (without FORCE) so the caller can override it
-# via -DCMAKE_CROSSCOMPILING_EMULATOR=/full/path/to/wine64.
-set(CMAKE_CROSSCOMPILING_EMULATOR "wine64"
+# via -DCMAKE_CROSSCOMPILING_EMULATOR=/full/path/to/wine.
+set(CMAKE_CROSSCOMPILING_EMULATOR "wine"
     CACHE STRING "Emulator used to run cross-compiled Windows test binaries")
 
 # Restrict CMake's find_* commands to the MinGW sysroot so that host
