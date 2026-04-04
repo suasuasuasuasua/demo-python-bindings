@@ -321,7 +321,7 @@ if __name__ == "__main__":
     # everything after the first '--' is collected as extra cmake arguments
     # and is never seen by argparse.
     argv = sys.argv[1:]
-    extra_cmake: list = []
+    extra_cmake: list[str] = []
     if "--" in argv:
         idx = argv.index("--")
         extra_cmake = argv[idx + 1 :]
@@ -331,5 +331,5 @@ if __name__ == "__main__":
     args = parser.parse_args(argv)
     # Attach the pass-through cmake args (only meaningful for 'build').
     if hasattr(args, "extra_cmake"):
-        args.extra_cmake = extra_cmake + args.extra_cmake
+        args.extra_cmake = extra_cmake
     args.func(args)
