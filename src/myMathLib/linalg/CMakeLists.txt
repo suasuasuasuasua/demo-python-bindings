@@ -27,10 +27,11 @@ if(BUILD_PYTHON_BINDINGS)
 
     target_include_directories(_linalg PRIVATE include)
 
-    # myMathLib_linalg is installed in myMathLib/linalg/, while the shared
-    # utility libraries (numerics, operators, constants) are installed one level
-    # up in myMathLib/.  We therefore need both $ORIGIN (for the sibling
-    # myMathLib_linalg.so) and $ORIGIN/.. (for the utility DLLs).
+    # _linalg and myMathLib_linalg are installed together in myMathLib/linalg/.
+    # _linalg needs $ORIGIN to locate myMathLib_linalg.so in the same directory.
+    # myMathLib_linalg needs both $ORIGIN (for any peer libs in the same dir) and
+    # $ORIGIN/.. to reach the utility DLLs (numerics, operators, constants) one
+    # level up in myMathLib/.
     if(APPLE)
         set_target_properties(_linalg PROPERTIES
             INSTALL_RPATH "@loader_path")

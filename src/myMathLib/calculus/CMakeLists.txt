@@ -27,8 +27,11 @@ if(BUILD_PYTHON_BINDINGS)
 
     target_include_directories(_calculus PRIVATE include)
 
-    # myMathLib_calculus is installed in myMathLib/calculus/, while the shared
-    # utility libraries live one level up in myMathLib/.
+    # _calculus and myMathLib_calculus are installed together in myMathLib/calculus/.
+    # _calculus needs $ORIGIN to locate myMathLib_calculus.so in the same directory.
+    # myMathLib_calculus needs both $ORIGIN (for any peer libs in the same dir) and
+    # $ORIGIN/.. to reach the utility DLLs (numerics, operators, constants) one
+    # level up in myMathLib/.
     if(APPLE)
         set_target_properties(_calculus PROPERTIES
             INSTALL_RPATH "@loader_path")

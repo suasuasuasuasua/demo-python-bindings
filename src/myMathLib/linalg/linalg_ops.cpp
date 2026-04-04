@@ -65,8 +65,9 @@ double angle_between(const std::vector<double>& a, const std::vector<double>& b)
     if (a.size() != b.size()) {
         throw std::invalid_argument("Vectors must have the same length");
     }
-    // safe_divide (from numerics) returns 0 when the denominator is ~0,
-    // which clamp then maps to 90 degrees — a sensible fallback for zero vectors.
+    // safe_divide (from numerics) returns 0 when the denominator is ~0.
+    // Clamping to [-1, 1] guards against floating-point values that drift
+    // just outside that range, which would make acos return NaN.
     double cos_angle = numerics::safe_divide(dot(a, b), norm(a) * norm(b));
     cos_angle = operators::clamp(cos_angle, -1.0, 1.0);
     return operators::radians_to_degrees(std::acos(cos_angle));
