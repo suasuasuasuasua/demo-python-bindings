@@ -50,20 +50,13 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 wine64
 
-      - name: Detect Wine binary and initialise Wine prefix
+      - name: Set Wine environment variables
         run: |
-          # Store the full path so cmake's execute_process can find it without
-          # relying on PATH resolution inside the generated cmake test scripts.
+          # Resolve the full path to wine64 so cmake's execute_process can find
+          # it without relying on PATH lookup inside generated cmake test scripts.
           WINE_BIN=$(which wine64)
           echo "WINE_BIN=${WINE_BIN}" >> $GITHUB_ENV
-          # Create the Wine prefix once upfront; suppresses interactive setup
-          # dialogs that would block test execution.
-          WINEDEBUG=-all "${WINE_BIN}" wineboot --init
-        env:
-          WINEDEBUG: -all
 
-      - name: Set Wine DLL search path
-        run: |
           MINGW_DLL_DIR=$(dirname $(x86_64-w64-mingw32-gcc -print-libgcc-file-name))
           BUILD_BIN="$(pwd)/build-mingw/bin"
           # Wine's WINEPATH uses semicolons (Windows path separator), not colons.
