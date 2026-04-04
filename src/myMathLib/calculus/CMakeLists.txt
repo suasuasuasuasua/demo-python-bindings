@@ -40,7 +40,7 @@ if(BUILD_TESTING)
     add_executable(test_calculus
         ${PROJECT_SOURCE_DIR}/tests/cpp/test_calculus.cpp
     )
-    target_link_libraries(test_calculus PRIVATE myMathLib_calculus)
+    target_link_libraries(test_calculus PRIVATE myMathLib_calculus GTest::gtest_main)
     target_include_directories(test_calculus PRIVATE include)
 
     if(APPLE)
@@ -49,5 +49,5 @@ if(BUILD_TESTING)
         set_target_properties(test_calculus PROPERTIES BUILD_RPATH "$ORIGIN")
     endif()
 
-    add_test(NAME calculus COMMAND test_calculus)
+    gtest_discover_tests(test_calculus)
 endif()

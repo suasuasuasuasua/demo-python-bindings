@@ -40,7 +40,7 @@ if(BUILD_TESTING)
     add_executable(test_math_ops
         ${PROJECT_SOURCE_DIR}/tests/cpp/test_math_ops.cpp
     )
-    target_link_libraries(test_math_ops PRIVATE myMathLib_core)
+    target_link_libraries(test_math_ops PRIVATE myMathLib_core GTest::gtest_main)
     target_include_directories(test_math_ops PRIVATE include)
 
     if(APPLE)
@@ -49,5 +49,5 @@ if(BUILD_TESTING)
         set_target_properties(test_math_ops PROPERTIES BUILD_RPATH "$ORIGIN")
     endif()
 
-    add_test(NAME math_ops COMMAND test_math_ops)
+    gtest_discover_tests(test_math_ops)
 endif()

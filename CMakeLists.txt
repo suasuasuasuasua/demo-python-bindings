@@ -26,6 +26,17 @@ endif()
 
 if(BUILD_TESTING)
     include(CTest)
+
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz
+        DOWNLOAD_EXTRACT_TIMESTAMP ON
+    )
+    # Prevent GoogleTest from overriding the compiler/linker settings on Windows
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+    include(GoogleTest)
 endif()
 
 # ── Sub-libraries ──────────────────────────────────────────────────────────────

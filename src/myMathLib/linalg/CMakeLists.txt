@@ -40,7 +40,7 @@ if(BUILD_TESTING)
     add_executable(test_linalg
         ${PROJECT_SOURCE_DIR}/tests/cpp/test_linalg.cpp
     )
-    target_link_libraries(test_linalg PRIVATE myMathLib_linalg)
+    target_link_libraries(test_linalg PRIVATE myMathLib_linalg GTest::gtest_main)
     target_include_directories(test_linalg PRIVATE include)
 
     if(APPLE)
@@ -49,5 +49,5 @@ if(BUILD_TESTING)
         set_target_properties(test_linalg PROPERTIES BUILD_RPATH "$ORIGIN")
     endif()
 
-    add_test(NAME linalg COMMAND test_linalg)
+    gtest_discover_tests(test_linalg)
 endif()
