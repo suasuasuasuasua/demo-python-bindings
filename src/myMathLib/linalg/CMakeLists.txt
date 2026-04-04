@@ -63,5 +63,5 @@ if(BUILD_TESTING)
         set_target_properties(test_linalg PROPERTIES BUILD_RPATH "$ORIGIN")
     endif()
 
-    gtest_discover_tests(test_linalg)
+    gtest_discover_tests(test_linalg DISCOVERY_TIMEOUT 60)
 endif()

@@ -63,5 +63,5 @@ if(BUILD_TESTING)
         set_target_properties(test_calculus PROPERTIES BUILD_RPATH "$ORIGIN")
     endif()
 
-    gtest_discover_tests(test_calculus)
+    gtest_discover_tests(test_calculus DISCOVERY_TIMEOUT 60)
 endif()
