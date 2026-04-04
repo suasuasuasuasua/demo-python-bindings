@@ -18,21 +18,21 @@ target_compile_options(myMathLib_linalg PRIVATE
 
 # ── Python extension (linalg) ──────────────────────────────────────────────────
 if(BUILD_PYTHON_BINDINGS)
-    pybind11_add_module(linalg bindings.cpp)
+    pybind11_add_module(_linalg bindings.cpp)
 
-    target_link_libraries(linalg PRIVATE myMathLib_linalg)
+    target_link_libraries(_linalg PRIVATE myMathLib_linalg)
 
-    target_include_directories(linalg PRIVATE include)
+    target_include_directories(_linalg PRIVATE include)
 
     if(APPLE)
-        set_target_properties(linalg PROPERTIES INSTALL_RPATH "@loader_path")
+        set_target_properties(_linalg PROPERTIES INSTALL_RPATH "@loader_path")
     elseif(UNIX)
-        set_target_properties(linalg PROPERTIES INSTALL_RPATH "$ORIGIN")
+        set_target_properties(_linalg PROPERTIES INSTALL_RPATH "$ORIGIN")
     endif()
 
-    # Install extension and its C++ shared library into the Python package dir
-    install(TARGETS linalg           DESTINATION myMathLib)
-    install(TARGETS myMathLib_linalg DESTINATION myMathLib)
+    # Install extension and its C++ shared library into the linalg sub-package dir
+    install(TARGETS _linalg          DESTINATION myMathLib/linalg)
+    install(TARGETS myMathLib_linalg DESTINATION myMathLib/linalg)
 endif()
 
 # ── C++ tests ──────────────────────────────────────────────────────────────────

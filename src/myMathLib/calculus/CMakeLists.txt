@@ -18,21 +18,21 @@ target_compile_options(myMathLib_calculus PRIVATE
 
 # ── Python extension (calculus) ────────────────────────────────────────────────
 if(BUILD_PYTHON_BINDINGS)
-    pybind11_add_module(calculus bindings.cpp)
+    pybind11_add_module(_calculus bindings.cpp)
 
-    target_link_libraries(calculus PRIVATE myMathLib_calculus)
+    target_link_libraries(_calculus PRIVATE myMathLib_calculus)
 
-    target_include_directories(calculus PRIVATE include)
+    target_include_directories(_calculus PRIVATE include)
 
     if(APPLE)
-        set_target_properties(calculus PROPERTIES INSTALL_RPATH "@loader_path")
+        set_target_properties(_calculus PROPERTIES INSTALL_RPATH "@loader_path")
     elseif(UNIX)
-        set_target_properties(calculus PROPERTIES INSTALL_RPATH "$ORIGIN")
+        set_target_properties(_calculus PROPERTIES INSTALL_RPATH "$ORIGIN")
     endif()
 
-    # Install extension and its C++ shared library into the Python package dir
-    install(TARGETS calculus             DESTINATION myMathLib)
-    install(TARGETS myMathLib_calculus   DESTINATION myMathLib)
+    # Install extension and its C++ shared library into the calculus sub-package dir
+    install(TARGETS _calculus            DESTINATION myMathLib/calculus)
+    install(TARGETS myMathLib_calculus   DESTINATION myMathLib/calculus)
 endif()
 
 # ── C++ tests ──────────────────────────────────────────────────────────────────
