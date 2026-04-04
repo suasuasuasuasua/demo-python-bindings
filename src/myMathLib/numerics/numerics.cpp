@@ -1,8 +1,9 @@
 #include "myMathLib/numerics.h"
-#include "myMathLib/operators.h"
 
 #include <cmath>
 #include <stdexcept>
+
+#include "myMathLib/operators.h"
 
 namespace myMathLib::numerics {
 
@@ -25,4 +26,4 @@ double safe_divide(double a, double b, double fallback) {
     return a / b;
 }
 
-} // namespace myMathLib::numerics
+}  // namespace myMathLib::numerics

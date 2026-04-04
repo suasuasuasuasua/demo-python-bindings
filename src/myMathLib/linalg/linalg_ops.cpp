@@ -1,9 +1,10 @@
 #include "myMathLib/linalg_ops.h"
-#include "myMathLib/numerics.h"
-#include "myMathLib/operators.h"
 
 #include <cmath>
 #include <stdexcept>
+
+#include "myMathLib/numerics.h"
+#include "myMathLib/operators.h"
 
 namespace myMathLib::linalg {
 
@@ -18,9 +19,7 @@ double dot(const std::vector<double>& a, const std::vector<double>& b) {
     return result;
 }
 
-double norm(const std::vector<double>& v) {
-    return std::sqrt(dot(v, v));
-}
+double norm(const std::vector<double>& v) { return std::sqrt(dot(v, v)); }
 
 std::vector<double> cross(const std::vector<double>& a, const std::vector<double>& b) {
     if (a.size() != 3 || b.size() != 3) {
@@ -33,10 +32,8 @@ std::vector<double> cross(const std::vector<double>& a, const std::vector<double
     };
 }
 
-std::vector<std::vector<double>> matmul(
-    const std::vector<std::vector<double>>& A,
-    const std::vector<std::vector<double>>& B)
-{
+std::vector<std::vector<double>> matmul(const std::vector<std::vector<double>>& A,
+                                        const std::vector<std::vector<double>>& B) {
     if (A.empty() || B.empty()) {
         throw std::invalid_argument("Matrices must be non-empty");
     }
@@ -57,7 +54,7 @@ std::vector<std::vector<double>> matmul(
     return C;
 }
 
-} // namespace myMathLib::linalg
+}  // namespace myMathLib::linalg
 
 namespace myMathLib::linalg {
 
@@ -73,4 +70,4 @@ double angle_between(const std::vector<double>& a, const std::vector<double>& b)
     return operators::radians_to_degrees(std::acos(cos_angle));
 }
 
-} // namespace myMathLib::linalg
+}  // namespace myMathLib::linalg

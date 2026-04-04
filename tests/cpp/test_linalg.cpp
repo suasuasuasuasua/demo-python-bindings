@@ -1,33 +1,22 @@
 #include <gtest/gtest.h>
+
 #include "myMathLib/linalg_ops.h"
 
-TEST(Dot, Basic) {
-    EXPECT_DOUBLE_EQ(myMathLib::linalg::dot({1, 2, 3}, {4, 5, 6}), 32.0);
-}
+TEST(Dot, Basic) { EXPECT_DOUBLE_EQ(myMathLib::linalg::dot({1, 2, 3}, {4, 5, 6}), 32.0); }
 
-TEST(Dot, Orthogonal) {
-    EXPECT_DOUBLE_EQ(myMathLib::linalg::dot({1, 0}, {0, 1}), 0.0);
-}
+TEST(Dot, Orthogonal) { EXPECT_DOUBLE_EQ(myMathLib::linalg::dot({1, 0}, {0, 1}), 0.0); }
 
-TEST(Dot, Negative) {
-    EXPECT_DOUBLE_EQ(myMathLib::linalg::dot({-1, -2}, {1, 2}), -5.0);
-}
+TEST(Dot, Negative) { EXPECT_DOUBLE_EQ(myMathLib::linalg::dot({-1, -2}, {1, 2}), -5.0); }
 
 TEST(Dot, MismatchedSizesThrows) {
     EXPECT_THROW(myMathLib::linalg::dot({1, 2}, {1, 2, 3}), std::invalid_argument);
 }
 
-TEST(Norm, ThreeFourFive) {
-    EXPECT_DOUBLE_EQ(myMathLib::linalg::norm({3, 4}), 5.0);
-}
+TEST(Norm, ThreeFourFive) { EXPECT_DOUBLE_EQ(myMathLib::linalg::norm({3, 4}), 5.0); }
 
-TEST(Norm, ZeroVector) {
-    EXPECT_DOUBLE_EQ(myMathLib::linalg::norm({0, 0, 0}), 0.0);
-}
+TEST(Norm, ZeroVector) { EXPECT_DOUBLE_EQ(myMathLib::linalg::norm({0, 0, 0}), 0.0); }
 
-TEST(Norm, UnitVector) {
-    EXPECT_DOUBLE_EQ(myMathLib::linalg::norm({1, 0, 0}), 1.0);
-}
+TEST(Norm, UnitVector) { EXPECT_DOUBLE_EQ(myMathLib::linalg::norm({1, 0, 0}), 1.0); }
 
 TEST(Cross, XCrossY) {
     auto r = myMathLib::linalg::cross({1, 0, 0}, {0, 1, 0});
@@ -69,10 +58,7 @@ TEST(Matmul, Identity) {
 }
 
 TEST(Matmul, IncompatibleDimsThrows) {
-    EXPECT_THROW(
-        myMathLib::linalg::matmul({{1, 2}}, {{1}, {2}, {3}}),
-        std::invalid_argument
-    );
+    EXPECT_THROW(myMathLib::linalg::matmul({{1, 2}}, {{1}, {2}, {3}}), std::invalid_argument);
 }
 
 TEST(AngleBetween, Orthogonal) {
@@ -93,4 +79,3 @@ TEST(AngleBetween, Antiparallel) {
 TEST(AngleBetween, MismatchedSizesThrows) {
     EXPECT_THROW(myMathLib::linalg::angle_between({1, 2}, {1, 2, 3}), std::invalid_argument);
 }
-

@@ -3,13 +3,13 @@
 #include <cstddef>
 
 #ifdef _WIN32
-#  ifdef NUMERICS_EXPORTS
-#    define NUMERICS_API __declspec(dllexport)
-#  else
-#    define NUMERICS_API __declspec(dllimport)
-#  endif
+#ifdef NUMERICS_EXPORTS
+#define NUMERICS_API __declspec(dllexport)
 #else
-#  define NUMERICS_API __attribute__((visibility("default")))
+#define NUMERICS_API __declspec(dllimport)
+#endif
+#else
+#define NUMERICS_API __attribute__((visibility("default")))
 #endif
 
 namespace myMathLib::numerics {
@@ -23,4 +23,4 @@ NUMERICS_API double safe_sqrt(double x);
 // Division that returns fallback when the denominator is near zero.
 NUMERICS_API double safe_divide(double a, double b, double fallback = 0.0);
 
-} // namespace myMathLib::numerics
+}  // namespace myMathLib::numerics

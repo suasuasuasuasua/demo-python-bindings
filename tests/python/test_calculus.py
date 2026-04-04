@@ -7,15 +7,15 @@ import myMathLib.calculus as calculus
 class TestDerivative(unittest.TestCase):
     def test_square_at_3(self):
         # d/dx x^2 at x=3 should be 6
-        result = calculus.derivative(lambda x: x ** 2, 3.0)
+        result = calculus.derivative(lambda x: x**2, 3.0)
         self.assertAlmostEqual(result, 6.0, places=4)
 
     def test_square_at_zero(self):
-        result = calculus.derivative(lambda x: x ** 2, 0.0)
+        result = calculus.derivative(lambda x: x**2, 0.0)
         self.assertAlmostEqual(result, 0.0, places=4)
 
     def test_square_negative(self):
-        result = calculus.derivative(lambda x: x ** 2, -2.0)
+        result = calculus.derivative(lambda x: x**2, -2.0)
         self.assertAlmostEqual(result, -4.0, places=4)
 
     def test_sin(self):
@@ -41,7 +41,7 @@ class TestIntegrate(unittest.TestCase):
 
     def test_quadratic(self):
         # integral of x^2 from 0 to 1 = 1/3
-        result = calculus.integrate(lambda x: x ** 2, 0.0, 1.0, 10000)
+        result = calculus.integrate(lambda x: x**2, 0.0, 1.0, 10000)
         self.assertAlmostEqual(result, 1.0 / 3.0, places=4)
 
     def test_sin_over_pi(self):

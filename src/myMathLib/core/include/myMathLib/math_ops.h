@@ -1,13 +1,13 @@
 #pragma once
 
 #ifdef _WIN32
-#  ifdef MYMATHLIB_EXPORTS
-#    define MYMATHLIB_API __declspec(dllexport)
-#  else
-#    define MYMATHLIB_API __declspec(dllimport)
-#  endif
+#ifdef MYMATHLIB_EXPORTS
+#define MYMATHLIB_API __declspec(dllexport)
 #else
-#  define MYMATHLIB_API __attribute__((visibility("default")))
+#define MYMATHLIB_API __declspec(dllimport)
+#endif
+#else
+#define MYMATHLIB_API __attribute__((visibility("default")))
 #endif
 
 namespace myMathLib {
@@ -18,4 +18,4 @@ MYMATHLIB_API double multiply(double a, double b);
 MYMATHLIB_API double divide(double a, double b);
 MYMATHLIB_API double power(double base, double exponent);
 
-} // namespace myMathLib
+}  // namespace myMathLib

@@ -1,8 +1,9 @@
 #include "myMathLib/calculus_ops.h"
-#include "myMathLib/numerics.h"
-#include "myMathLib/operators.h"
 
 #include <stdexcept>
+
+#include "myMathLib/numerics.h"
+#include "myMathLib/operators.h"
 
 namespace myMathLib::calculus {
 
@@ -25,14 +26,12 @@ double integrate(std::function<double(double)> f, double a, double b, int n) {
     return sum * h;
 }
 
-} // namespace myMathLib::calculus
+}  // namespace myMathLib::calculus
 
 namespace myMathLib::calculus {
 
-double converging_integrate(
-    std::function<double(double)> f, double a, double b,
-    double tol, int max_doublings)
-{
+double converging_integrate(std::function<double(double)> f, double a, double b, double tol,
+                            int max_doublings) {
     if (tol <= 0.0) {
         throw std::invalid_argument("tol must be positive");
     }
@@ -50,8 +49,7 @@ double converging_integrate(
         double curr = integrate(f, a, b, n);
         // Use safe_divide (numerics) for a relative-error check to avoid
         // division by zero when the integral is very close to zero.
-        double scale = numerics::safe_divide(std::abs(curr - prev),
-                                             std::abs(curr) + 1.0);
+        double scale = numerics::safe_divide(std::abs(curr - prev), std::abs(curr) + 1.0);
         if (operators::approx_equal(scale, 0.0, tol)) {
             return curr;
         }
@@ -60,4 +58,4 @@ double converging_integrate(
     return prev;
 }
 
-} // namespace myMathLib::calculus
+}  // namespace myMathLib::calculus
