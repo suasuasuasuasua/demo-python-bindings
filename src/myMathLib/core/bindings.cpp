@@ -3,8 +3,8 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(myMathLib, m) {
-    m.doc() = "myMathLib: a dummy math library with Python bindings";
+PYBIND11_MODULE(_core, m) {
+    m.doc() = "myMathLib._core: core arithmetic operations";
 
     m.def("add", &myMathLib::add, py::arg("a"), py::arg("b"),
           "Add two numbers");
