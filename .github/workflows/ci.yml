@@ -35,7 +35,7 @@ jobs:
         run: pip install --no-build-isolation .
 
       - name: Run Python tests
-        run: python -m unittest discover -s tests/python -v
+        run: python dev.py test --python-only
 
   # ─── MinGW cross-compile: Linux → Windows ─────────────────────────────────
   mingw-cross-cpp:
@@ -64,23 +64,18 @@ jobs:
           # Wine's WINEPATH uses semicolons (Windows path separator), not colons.
           echo "WINEPATH=${MINGW_DLL_DIR};${BUILD_BIN}" >> $GITHUB_ENV
 
-      - name: Configure CMake (MinGW toolchain)
+      - name: Build (MinGW toolchain)
         run: >
-          cmake -B build-mingw
-          -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw-w64-x86_64.cmake
-          -DCMAKE_CROSSCOMPILING_EMULATOR="${WINE_BIN}"
-          -DBUILD_PYTHON_BINDINGS=OFF
-          -DBUILD_TESTING=ON
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE=PRE_TEST
-
-      - name: Build
-        run: cmake --build build-mingw --config Release
+          python dev.py build
+          -d build-mingw
+          --no-python-bindings
+          --tests
+          --toolchain cmake/toolchains/mingw-w64-x86_64.cmake
+          --emulator "$WINE_BIN"
+          -- -DCMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE=PRE_TEST
 
       - name: Run C++ tests via Wine
-        run: ctest --test-dir build-mingw -C Release --output-on-failure
-        env:
-          WINEDEBUG: -all
+        run: python dev.py test -d build-mingw --cpp-only --winedebug
 
   # ─── Native C++ build + tests ──────────────────────────────────────────────
   cpp-tests:
@@ -94,15 +89,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure CMake
-        run: >
-          cmake -B build
-          -DBUILD_PYTHON_BINDINGS=OFF
-          -DBUILD_TESTING=ON
-          -DCMAKE_BUILD_TYPE=Release
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
       - name: Build
-        run: cmake --build build --config Release
+        run: python dev.py build --no-python-bindings --tests
 
       - name: Run C++ tests
-        run: ctest --test-dir build -C Release --output-on-failure
+        run: python dev.py test --cpp-only
