@@ -48,7 +48,8 @@ TEST(Integrate, Quadratic) {
 
 TEST(Integrate, SinOverPi) {
     // integral of sin(x) from 0 to pi = 2
-    EXPECT_NEAR(myMathLib::calculus::integrate([](double x) { return std::sin(x); }, 0.0, M_PI, 10000), 2.0, 1e-4);
+    constexpr double pi = 3.14159265358979323846;
+    EXPECT_NEAR(myMathLib::calculus::integrate([](double x) { return std::sin(x); }, 0.0, pi, 10000), 2.0, 1e-4);
 }
 
 TEST(Integrate, ZeroIntervalsThrows) {
