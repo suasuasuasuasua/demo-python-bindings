@@ -34,9 +34,9 @@ if(BUILD_PYTHON_BINDINGS)
     # level up in myMathLib/.
     if(APPLE)
         set_target_properties(_calculus PROPERTIES
-            INSTALL_RPATH "@loader_path")
+            INSTALL_RPATH "@loader_path;@loader_path/..")
         set_target_properties(myMathLib_calculus PROPERTIES
-            INSTALL_RPATH "@loader_path:@loader_path/../")
+            INSTALL_RPATH "@loader_path;@loader_path/..")
     elseif(UNIX)
         set_target_properties(_calculus PROPERTIES
             INSTALL_RPATH "$ORIGIN")
