@@ -228,14 +228,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Cross-compiling emulator passed to CMAKE_CROSSCOMPILING_EMULATOR "
         "(e.g. path to wine for MinGW builds)",
     )
-    p_build.add_argument(
-        "--",
-        dest="extra_cmake",
-        nargs=argparse.REMAINDER,
-        default=[],
-        help="Extra arguments forwarded verbatim to cmake",
-    )
-    p_build.set_defaults(func=cmd_build)
+    p_build.set_defaults(func=cmd_build, extra_cmake=[])
 
     # ── test ────────────────────────────────────────────────────────────────
     p_test = sub.add_parser("test", help="Run C++ (ctest) and/or Python tests")
@@ -323,6 +316,20 @@ def build_parser() -> argparse.ArgumentParser:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    # argparse treats '--' as a special end-of-options sentinel and cannot
+    # parse it as a named argument.  Split sys.argv manually so that
+    # everything after the first '--' is collected as extra cmake arguments
+    # and is never seen by argparse.
+    argv = sys.argv[1:]
+    extra_cmake: list = []
+    if "--" in argv:
+        idx = argv.index("--")
+        extra_cmake = argv[idx + 1 :]
+        argv = argv[:idx]
+
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    # Attach the pass-through cmake args (only meaningful for 'build').
+    if hasattr(args, "extra_cmake"):
+        args.extra_cmake = extra_cmake + args.extra_cmake
     args.func(args)
