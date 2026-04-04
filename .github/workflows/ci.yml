@@ -50,15 +50,30 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 wine64
 
+      - name: Detect Wine binary and initialise Wine prefix
+        run: |
+          # Store the full path so cmake's execute_process can find it without
+          # relying on PATH resolution inside the generated cmake test scripts.
+          WINE_BIN=$(which wine64)
+          echo "WINE_BIN=${WINE_BIN}" >> $GITHUB_ENV
+          # Create the Wine prefix once upfront; suppresses interactive setup
+          # dialogs that would block test execution.
+          WINEDEBUG=-all "${WINE_BIN}" wineboot --init
+        env:
+          WINEDEBUG: -all
+
       - name: Set Wine DLL search path
         run: |
           MINGW_DLL_DIR=$(dirname $(x86_64-w64-mingw32-gcc -print-libgcc-file-name))
-          echo "WINEPATH=${MINGW_DLL_DIR}:$(pwd)/build-mingw/bin" >> $GITHUB_ENV
+          BUILD_BIN="$(pwd)/build-mingw/bin"
+          # Wine's WINEPATH uses semicolons (Windows path separator), not colons.
+          echo "WINEPATH=${MINGW_DLL_DIR};${BUILD_BIN}" >> $GITHUB_ENV
 
       - name: Configure CMake (MinGW toolchain)
         run: >
           cmake -B build-mingw
           -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw-w64-x86_64.cmake
+          -DCMAKE_CROSSCOMPILING_EMULATOR="${WINE_BIN}"
           -DBUILD_PYTHON_BINDINGS=OFF
           -DBUILD_TESTING=ON
           -DCMAKE_BUILD_TYPE=Release
@@ -69,6 +84,8 @@ jobs:
 
       - name: Run C++ tests via Wine
         run: ctest --test-dir build-mingw -C Release --output-on-failure
+        env:
+          WINEDEBUG: -all
 
   # ─── Native C++ build + tests ──────────────────────────────────────────────
   cpp-tests:
