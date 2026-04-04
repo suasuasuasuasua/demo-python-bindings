@@ -49,5 +49,5 @@ if(BUILD_TESTING)
         set_target_properties(test_math_ops PROPERTIES BUILD_RPATH "$ORIGIN")
     endif()
 
-    gtest_discover_tests(test_math_ops)
+    gtest_discover_tests(test_math_ops DISCOVERY_TIMEOUT 60)
 endif()

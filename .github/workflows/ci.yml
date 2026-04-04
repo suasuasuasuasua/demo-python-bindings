@@ -37,6 +37,51 @@ jobs:
       - name: Run Python tests
         run: python -m unittest discover -s tests/python -v
 
+  # ─── MinGW cross-compile: Linux → Windows ─────────────────────────────────
+  mingw-cross-cpp:
+    name: MinGW cross-compile C++ (Linux → Windows)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MinGW cross-compiler and Wine
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 wine64
+
+      - name: Set Wine environment variables
+        run: |
+          # Resolve the full path to the wine binary so cmake's execute_process
+          # can find it without relying on PATH lookup inside generated cmake
+          # test scripts.  On Ubuntu 24.04 the wine64 package installs the
+          # binary as 'wine' (universal 32/64-bit binary) rather than 'wine64'.
+          WINE_BIN=$(which wine64 2>/dev/null || which wine)
+          echo "WINE_BIN=${WINE_BIN}" >> $GITHUB_ENV
+
+          MINGW_DLL_DIR=$(dirname $(x86_64-w64-mingw32-gcc -print-libgcc-file-name))
+          BUILD_BIN="$(pwd)/build-mingw/bin"
+          # Wine's WINEPATH uses semicolons (Windows path separator), not colons.
+          echo "WINEPATH=${MINGW_DLL_DIR};${BUILD_BIN}" >> $GITHUB_ENV
+
+      - name: Configure CMake (MinGW toolchain)
+        run: >
+          cmake -B build-mingw
+          -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw-w64-x86_64.cmake
+          -DCMAKE_CROSSCOMPILING_EMULATOR="${WINE_BIN}"
+          -DBUILD_PYTHON_BINDINGS=OFF
+          -DBUILD_TESTING=ON
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE=PRE_TEST
+
+      - name: Build
+        run: cmake --build build-mingw --config Release
+
+      - name: Run C++ tests via Wine
+        run: ctest --test-dir build-mingw -C Release --output-on-failure
+        env:
+          WINEDEBUG: -all
+
   # ─── Native C++ build + tests ──────────────────────────────────────────────
   cpp-tests:
     name: C++ (${{ matrix.os }})
