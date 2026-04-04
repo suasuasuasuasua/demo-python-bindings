@@ -4,8 +4,8 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(linalg, m) {
-    m.doc() = "myMathLib.linalg: linear algebra operations";
+PYBIND11_MODULE(_linalg, m) {
+    m.doc() = "myMathLib.linalg._linalg: linear algebra operations (C++ extension)";
 
     m.def("dot", &myMathLib::linalg::dot, py::arg("a"), py::arg("b"),
           "Dot product of two equal-length vectors");

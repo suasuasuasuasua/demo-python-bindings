@@ -4,8 +4,8 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(calculus, m) {
-    m.doc() = "myMathLib.calculus: numerical calculus operations";
+PYBIND11_MODULE(_calculus, m) {
+    m.doc() = "myMathLib.calculus._calculus: numerical calculus operations (C++ extension)";
 
     m.def("derivative", &myMathLib::calculus::derivative,
           py::arg("f"), py::arg("x"), py::arg("h") = 1e-5,
