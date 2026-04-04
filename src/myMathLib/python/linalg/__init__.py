@@ -8,11 +8,10 @@ cross  -- cross product of two 3-element vectors
 matmul -- matrix multiplication of two 2-D lists (A @ B)
 """
 
-from ._linalg import cross, dot, matmul, norm
+from ._linalg import *
+from . import _linalg as _ext
 
-__all__ = [
-    "cross",
-    "dot",
-    "matmul",
-    "norm",
-]
+# Derive __all__ from the extension module so new C++ symbols are
+# automatically re-exported without updating this file.
+__all__ = [name for name in dir(_ext) if not name.startswith("_")]
+del _ext
