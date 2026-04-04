@@ -72,6 +72,21 @@ class TestMatmul(unittest.TestCase):
             linalg.matmul([[1, 2]], [[1], [2], [3]])
 
 
+class TestAngleBetween(unittest.TestCase):
+    def test_orthogonal(self):
+        self.assertAlmostEqual(linalg.angle_between([1, 0], [0, 1]), 90.0)
+
+    def test_parallel(self):
+        self.assertAlmostEqual(linalg.angle_between([1, 2, 3], [1, 2, 3]), 0.0)
+
+    def test_antiparallel(self):
+        self.assertAlmostEqual(linalg.angle_between([1, 0], [-1, 0]), 180.0)
+
+    def test_mismatched_raises(self):
+        with self.assertRaises(Exception):
+            linalg.angle_between([1, 2], [1, 2, 3])
+
+
 class TestModule(unittest.TestCase):
     def test_docstring(self):
         self.assertIsNotNone(linalg.__doc__)

@@ -22,4 +22,9 @@ LINALG_API std::vector<std::vector<double>> matmul(
     const std::vector<std::vector<double>>& A,
     const std::vector<std::vector<double>>& B);
 
+// Returns the angle between two vectors in degrees.
+// Uses numerics::safe_divide and operators::radians_to_degrees (which uses
+// constants::pi()), exercising the full shared-library dependency chain.
+LINALG_API double angle_between(const std::vector<double>& a, const std::vector<double>& b);
+
 } // namespace myMathLib::linalg

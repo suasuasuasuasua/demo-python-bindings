@@ -54,6 +54,24 @@ class TestIntegrate(unittest.TestCase):
             calculus.integrate(lambda x: x, 0.0, 1.0, 0)
 
 
+class TestConvergingIntegrate(unittest.TestCase):
+    def test_constant(self):
+        result = calculus.converging_integrate(lambda x: 1.0, 0.0, 5.0)
+        self.assertAlmostEqual(result, 5.0, places=4)
+
+    def test_linear(self):
+        result = calculus.converging_integrate(lambda x: x, 0.0, 1.0)
+        self.assertAlmostEqual(result, 0.5, places=4)
+
+    def test_equal_bounds_is_zero(self):
+        result = calculus.converging_integrate(lambda x: x, 2.0, 2.0)
+        self.assertAlmostEqual(result, 0.0, places=9)
+
+    def test_invalid_tol_raises(self):
+        with self.assertRaises(Exception):
+            calculus.converging_integrate(lambda x: x, 0.0, 1.0, -1.0)
+
+
 class TestModule(unittest.TestCase):
     def test_docstring(self):
         self.assertIsNotNone(calculus.__doc__)

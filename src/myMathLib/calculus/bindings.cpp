@@ -15,4 +15,9 @@ PYBIND11_MODULE(_calculus, m) {
           py::arg("f"), py::arg("a"), py::arg("b"), py::arg("n") = 1000,
           "Numerical integration of f over [a, b] using the composite trapezoidal rule. "
           "n is the number of sub-intervals (default 1000).");
+    m.def("converging_integrate", &myMathLib::calculus::converging_integrate,
+          py::arg("f"), py::arg("a"), py::arg("b"),
+          py::arg("tol") = 1e-6, py::arg("max_doublings") = 20,
+          "Adaptive trapezoidal integration that doubles sub-intervals until "
+          "two successive estimates agree within tol.");
 }

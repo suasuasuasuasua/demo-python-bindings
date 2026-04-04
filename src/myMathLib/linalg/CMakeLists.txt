@@ -9,6 +9,9 @@ target_include_directories(myMathLib_linalg
         $<INSTALL_INTERFACE:include>
 )
 
+# Pull in numerics (which transitively exposes operators → constants).
+target_link_libraries(myMathLib_linalg PUBLIC myMathLib_numerics)
+
 target_compile_definitions(myMathLib_linalg PRIVATE LINALG_EXPORTS)
 
 target_compile_options(myMathLib_linalg PRIVATE
@@ -24,10 +27,20 @@ if(BUILD_PYTHON_BINDINGS)
 
     target_include_directories(_linalg PRIVATE include)
 
+    # myMathLib_linalg is installed in myMathLib/linalg/, while the shared
+    # utility libraries (numerics, operators, constants) are installed one level
+    # up in myMathLib/.  We therefore need both $ORIGIN (for the sibling
+    # myMathLib_linalg.so) and $ORIGIN/.. (for the utility DLLs).
     if(APPLE)
-        set_target_properties(_linalg PROPERTIES INSTALL_RPATH "@loader_path")
+        set_target_properties(_linalg PROPERTIES
+            INSTALL_RPATH "@loader_path")
+        set_target_properties(myMathLib_linalg PROPERTIES
+            INSTALL_RPATH "@loader_path:@loader_path/../")
     elseif(UNIX)
-        set_target_properties(_linalg PROPERTIES INSTALL_RPATH "$ORIGIN")
+        set_target_properties(_linalg PROPERTIES
+            INSTALL_RPATH "$ORIGIN")
+        set_target_properties(myMathLib_linalg PROPERTIES
+            INSTALL_RPATH "$ORIGIN:$ORIGIN/..")
     endif()
 
     # Install extension and its C++ shared library into the linalg sub-package dir
