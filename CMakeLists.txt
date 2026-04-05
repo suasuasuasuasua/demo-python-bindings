@@ -21,15 +21,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if(BUILD_PYTHON_BINDINGS)
   find_package(pybind11 CONFIG REQUIRED)
-
-  # Install the pure-Python package so that myMathLib/__init__.py and the
-  # sub-package __init__.py files are included in the wheel alongside the
-  # extension modules.
-  install(FILES src/myMathLib/python/__init__.py DESTINATION myMathLib)
-  install(FILES src/myMathLib/python/linalg/__init__.py
-          DESTINATION myMathLib/linalg)
-  install(FILES src/myMathLib/python/calculus/__init__.py
-          DESTINATION myMathLib/calculus)
 endif()
 
 if(BUILD_TESTING)
