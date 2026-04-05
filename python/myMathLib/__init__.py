@@ -2,15 +2,17 @@
 
 Sub-packages
 ------------
-linalg   -- linear algebra (dot product, norm, cross product, matmul)
-calculus -- numerical calculus (derivative, integrate)
+constants -- mathematical constants (pi, e, sqrt2, golden_ratio)
+numerics  -- numerical utilities (round_to, safe_sqrt, safe_divide)
+linalg    -- linear algebra (dot product, norm, cross product, matmul)
+calculus  -- numerical calculus (derivative, integrate)
 
 Core arithmetic functions (add, subtract, multiply, divide, power) are
 imported directly into this namespace for convenience.
 """
 
 from ._core import add, divide, multiply, power, subtract
-from . import calculus, linalg
+from . import calculus, constants, linalg, numerics
 
 __all__ = [
     "add",
@@ -18,6 +20,8 @@ __all__ = [
     "multiply",
     "divide",
     "power",
+    "constants",
+    "numerics",
     "linalg",
     "calculus",
 ]
