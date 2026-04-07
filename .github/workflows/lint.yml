@@ -25,7 +25,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file          # use .clang-format in the repo root
-          tidy-checks: ''      # clang-format check only, no clang-tidy
+          tidy-checks: '-*'    # disable all clang-tidy checks (format only)
           files-changed-only: 'true'   # only annotate files touched in this PR/push
           thread-comments: update      # update existing bot comment rather than posting new ones
 

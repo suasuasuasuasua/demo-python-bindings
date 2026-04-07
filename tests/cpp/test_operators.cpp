@@ -1,12 +1,9 @@
 #include <gtest/gtest.h>
 
+#include "myMathLib/constants.h"
 #include "myMathLib/operators.h"
 
-#include "myMathLib/constants.h"
-
-TEST(ApproxEqual, EqualValues) {
-    EXPECT_TRUE(myMathLib::operators::approx_equal(1.0, 1.0));
-}
+TEST(ApproxEqual, EqualValues) { EXPECT_TRUE(myMathLib::operators::approx_equal(1.0, 1.0)); }
 
 TEST(ApproxEqual, WithinDefaultTolerance) {
     EXPECT_TRUE(myMathLib::operators::approx_equal(1.0, 1.0 + 1e-10));
@@ -38,8 +35,7 @@ TEST(DegreesToRadians, Zero) {
 }
 
 TEST(DegreesToRadians, HalfCircle) {
-    EXPECT_NEAR(myMathLib::operators::degrees_to_radians(180.0), myMathLib::constants::pi(),
-                1e-12);
+    EXPECT_NEAR(myMathLib::operators::degrees_to_radians(180.0), myMathLib::constants::pi(), 1e-12);
 }
 
 TEST(DegreesToRadians, FullCircle) {
@@ -52,13 +48,12 @@ TEST(RadiansToDegrees, Zero) {
 }
 
 TEST(RadiansToDegrees, Pi) {
-    EXPECT_NEAR(myMathLib::operators::radians_to_degrees(myMathLib::constants::pi()), 180.0,
-                1e-12);
+    EXPECT_NEAR(myMathLib::operators::radians_to_degrees(myMathLib::constants::pi()), 180.0, 1e-12);
 }
 
 TEST(RadiansToDegrees, Roundtrip) {
     double angle = 45.0;
-    EXPECT_NEAR(myMathLib::operators::radians_to_degrees(
-                    myMathLib::operators::degrees_to_radians(angle)),
-                angle, 1e-12);
+    EXPECT_NEAR(
+        myMathLib::operators::radians_to_degrees(myMathLib::operators::degrees_to_radians(angle)),
+        angle, 1e-12);
 }
