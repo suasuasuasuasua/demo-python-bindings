@@ -22,3 +22,11 @@ target-version = ["py38", "py39", "py310", "py311", "py312"]
 [tool.isort]
 profile = "black"
 line_length = 100
+
+[tool.coverage.run]
+source = ["myMathLib"]
+branch = true
+relative_files = true
+
+[tool.coverage.report]
+show_missing = true

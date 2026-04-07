@@ -1,0 +1,54 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write  # required by cpp-linter to post inline review comments
+
+jobs:
+  # ─── C++ clang-format ────────────────────────────────────────────────────────
+  clang-format:
+    name: C++ (clang-format)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check C++ formatting
+        uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file          # use .clang-format in the repo root
+          tidy-checks: '-*'    # disable all clang-tidy checks (format only)
+          files-changed-only: 'true'   # only annotate files touched in this PR/push
+          thread-comments: update      # update existing bot comment rather than posting new ones
+
+      - name: Fail if format violations were found
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1
+
+  # ─── Python black + isort ────────────────────────────────────────────────────
+  python-lint:
+    name: Python (black + isort)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install linters
+        run: pip install black isort
+
+      - name: black
+        run: black --check --diff .
+
+      - name: isort
+        run: isort --check --diff .

@@ -1,0 +1,105 @@
+name: Coverage
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write  # required to post coverage comment on the PR
+
+jobs:
+  # ─── Python coverage ─────────────────────────────────────────────────────────
+  python-coverage:
+    name: Python coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build dependencies and coverage
+        run: pip install scikit-build-core pybind11 coverage
+
+      - name: Build and install package
+        run: pip install --no-build-isolation .
+
+      - name: Run tests with coverage
+        run: coverage run --source=myMathLib -m unittest discover -s tests/python
+
+      - name: Print coverage report
+        run: coverage report --show-missing
+
+      - name: Generate XML for comment action
+        run: coverage xml
+
+      # Posts a summary table + badge as a PR comment; updates on re-runs.
+      - name: Post coverage comment on PR
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  # ─── C++ coverage (lcov) ─────────────────────────────────────────────────────
+  cpp-coverage:
+    name: C++ coverage (lcov)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install lcov
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y lcov
+
+      - name: Configure (debug + coverage instrumentation)
+        run: >
+          cmake -B build
+          -DCMAKE_BUILD_TYPE=Debug
+          -DBUILD_TESTING=ON
+          -DBUILD_PYTHON_BINDINGS=OFF
+          -DCMAKE_CXX_FLAGS="--coverage"
+          -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Run C++ tests
+        # continue even if some tests fail so coverage data is still gathered;
+        # the pre-existing RoundTo.NegativeValue failure should not block artifacts.
+        continue-on-error: true
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Gather coverage data (lcov)
+        run: |
+          lcov --capture \
+               --directory build \
+               --output-file coverage.info
+          # Remove system headers, googletest internals and the test driver files
+          # so the report reflects only the myMathLib source code.
+          lcov --remove coverage.info \
+               '/usr/*' \
+               '*/googletest*' \
+               '*/tests/cpp/*' \
+               --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Generate HTML report
+        run: genhtml coverage.info --output-directory coverage-html
+
+      - name: Upload HTML report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpp-coverage-html
+          path: coverage-html/
+
+      - name: Write coverage summary to job summary
+        run: |
+          echo "## C++ Test Coverage" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          lcov --summary coverage.info 2>&1 >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Full HTML report available in the *cpp-coverage-html* workflow artifact." \
+               >> "$GITHUB_STEP_SUMMARY"
