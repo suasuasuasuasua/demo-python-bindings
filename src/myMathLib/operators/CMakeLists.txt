@@ -20,13 +20,40 @@ target_compile_options(
 # myMathLib_constants.so, so $ORIGIN (or @loader_path on Apple) is enough to
 # resolve the constants dependency.
 if(BUILD_PYTHON_BINDINGS)
+  pybind11_add_module(_operators bindings.cpp)
+
+  target_link_libraries(_operators PRIVATE myMathLib_operators)
+
+  target_include_directories(_operators PRIVATE include)
+
+  # _operators is installed in myMathLib/operators/ while myMathLib_operators.so
+  # (and its transitive dep constants) live one level up in myMathLib/.
   if(APPLE)
+    set_target_properties(_operators PROPERTIES INSTALL_RPATH "@loader_path/..")
     set_target_properties(myMathLib_operators PROPERTIES INSTALL_RPATH
                                                          "@loader_path")
   elseif(UNIX)
+    set_target_properties(_operators PROPERTIES INSTALL_RPATH "$ORIGIN/..")
     set_target_properties(myMathLib_operators PROPERTIES INSTALL_RPATH
                                                          "$ORIGIN")
   endif()
 
+  install(TARGETS _operators DESTINATION myMathLib/operators)
   install(TARGETS myMathLib_operators DESTINATION myMathLib)
+endif()
+
+# ── C++ tests
+# ──────────────────────────────────────────────────────────────────
+if(BUILD_TESTING)
+  add_executable(test_operators ${PROJECT_SOURCE_DIR}/tests/cpp/test_operators.cpp)
+  target_link_libraries(test_operators PRIVATE myMathLib_operators GTest::gtest_main)
+  target_include_directories(test_operators PRIVATE include)
+
+  if(APPLE)
+    set_target_properties(test_operators PROPERTIES BUILD_RPATH "@loader_path")
+  elseif(UNIX)
+    set_target_properties(test_operators PROPERTIES BUILD_RPATH "$ORIGIN")
+  endif()
+
+  gtest_discover_tests(test_operators DISCOVERY_TIMEOUT 60)
 endif()
