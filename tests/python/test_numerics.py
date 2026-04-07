@@ -26,8 +26,7 @@ class TestSafeSqrt(unittest.TestCase):
         self.assertAlmostEqual(numerics.safe_sqrt(0.0), 0.0)
 
     def test_irrational(self):
-        self.assertAlmostEqual(numerics.safe_sqrt(2.0),
-                               math.sqrt(2), places=12)
+        self.assertAlmostEqual(numerics.safe_sqrt(2.0), math.sqrt(2), places=12)
 
     def test_negative_raises(self):
         with self.assertRaises(ValueError):

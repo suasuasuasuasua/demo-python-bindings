@@ -12,8 +12,8 @@ Core arithmetic functions (add, subtract, multiply, divide, power) are
 imported directly into this namespace for convenience.
 """
 
-from ._core import add, divide, multiply, power, subtract
 from . import calculus, constants, linalg, numerics, operators
+from ._core import add, divide, multiply, power, subtract
 
 __all__ = [
     "add",
